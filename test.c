@@ -1,6 +1,8 @@
 #include "raylib.h"
 #include <stdlib.h>
 
+#define MAP_PIECES 16
+
 int main(void) {
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////Setup
     //SetConfigFlags(FLAG_MSAA_4X_HINT);
@@ -10,21 +12,20 @@ int main(void) {
     int ChunkZ;
     const int chunkHeight = 128;
     const int mapSize = 2048;
-    const int mapPieces = 16;
-    const int chunkSize = mapSize / mapPieces;
+    const int chunkSize = mapSize / MAP_PIECES;
     const float mapHeightScale = 0.6f;
-    Image terrainHeightmap[16][16];             //MUST be the same as mapPieces!
-    Texture2D terrainTexture[16][16];           //MUST be the same as mapPieces!
-    Mesh terrainMesh[16][16];                   //MUST be the same as mapPieces!
-    Model terrainModel[16][16];                 //MUST be the same as mapPieces!
-    Vector3 terrainPosition[16][16];            //MUST be the same as mapPieces!
+    Image terrainHeightmap[MAP_PIECES][MAP_PIECES];             
+    Texture2D terrainTexture[MAP_PIECES][MAP_PIECES];           
+    Mesh terrainMesh[MAP_PIECES][MAP_PIECES];                   
+    Model terrainModel[MAP_PIECES][MAP_PIECES];                 
+    Vector3 terrainPosition[MAP_PIECES][MAP_PIECES];            
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////Terrain Generation & Camera
     Camera camera = {{mapSize / 2, 100.0f, mapSize / 2}, {0.0f, 0.0f, 0.0f}, {0.0f, 1.0f, 0.0f}, 90.0f, 0};
     SetCameraMode(camera, CAMERA_FIRST_PERSON);
     SetTargetFPS(999);
 
-    for (ChunkX = 0; ChunkX < mapPieces; ChunkX++) {
-        for (ChunkZ = 0; ChunkZ < mapPieces; ChunkZ++) {
+    for (ChunkX = 0; ChunkX < MAP_PIECES; ChunkX++) {
+        for (ChunkZ = 0; ChunkZ < MAP_PIECES; ChunkZ++) {
             terrainHeightmap[ChunkX][ChunkZ] = GenImagePerlinNoise(chunkSize, chunkSize, ChunkX * chunkSize - ChunkX, ChunkZ * chunkSize - ChunkZ, mapHeightScale);
             terrainTexture[ChunkX][ChunkZ] = LoadTextureFromImage(terrainHeightmap[ChunkX][ChunkZ]);
             
@@ -50,8 +51,8 @@ int main(void) {
 
             BeginMode3D(camera);
 
-            for (ChunkX = 0; ChunkX < mapPieces; ChunkX++) {
-                for (ChunkZ = 0; ChunkZ < mapPieces; ChunkZ++) {
+            for (ChunkX = 0; ChunkX < MAP_PIECES; ChunkX++) {
+                for (ChunkZ = 0; ChunkZ < MAP_PIECES; ChunkZ++) {
                     DrawModel(terrainModel[ChunkX][ChunkZ], terrainPosition[ChunkX][ChunkZ], 1.0f, RED);
                 }
             }
@@ -63,8 +64,8 @@ int main(void) {
         EndDrawing();
     }
 
-    for (ChunkX = 0; ChunkX < mapPieces; ChunkX++) {
-        for (ChunkZ = 0; ChunkZ < mapPieces; ChunkZ++) {
+    for (ChunkX = 0; ChunkX < MAP_PIECES; ChunkX++) {
+        for (ChunkZ = 0; ChunkZ < MAP_PIECES; ChunkZ++) {
             UnloadTexture(terrainTexture[ChunkX][ChunkZ]);
             UnloadModel(terrainModel[ChunkX][ChunkZ]);
         }
